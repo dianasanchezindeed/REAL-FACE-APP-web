@@ -41,7 +41,7 @@ function WaitlistForm({ large = false }) {
       if (error.code === '23505') {
         setDone(true)
       } else {
-        setError('Algo falló. Inténtalo de nuevo.')
+        setError('Something went wrong. Please try again.')
       }
     } else {
       setDone(true)
@@ -53,7 +53,7 @@ function WaitlistForm({ large = false }) {
          style={{ border: '1px solid rgba(232,84,122,0.3)', animation: 'float 4s ease-in-out infinite' }}>
       <span style={{ fontSize: large ? 28 : 20 }}>✦</span>
       <span className="gradient-text font-display" style={{ fontSize: large ? '1.3rem' : '1rem', fontStyle: 'italic' }}>
-        Estás dentro. Te avisaremos pronto.
+        You're in. We'll let you know soon.
       </span>
     </div>
   )
@@ -66,7 +66,7 @@ function WaitlistForm({ large = false }) {
           required
           value={email}
           onChange={e => setEmail(e.target.value)}
-          placeholder="tu@email.com"
+          placeholder="you@email.com"
           className={`input-field rounded-2xl flex-1 ${large ? 'px-5 py-4 text-base' : 'px-4 py-3 text-sm'}`}
         />
         <button
@@ -83,7 +83,7 @@ function WaitlistForm({ large = false }) {
             transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
-          {loading ? '...' : 'Unirme'}
+          {loading ? '...' : 'Join'}
         </button>
       </form>
       {error && <p style={{ fontSize: 12, color: '#e8547a', marginTop: 8 }}>{error}</p>}
@@ -123,7 +123,7 @@ function CompatCircle() {
         <div className="gradient-text font-display" style={{ fontSize: '3rem', lineHeight: 1, fontWeight: 300 }}>
           {visible ? '87%' : '0%'}
         </div>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>compatibilidad</div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>compatibility</div>
       </div>
     </div>
   )
@@ -160,7 +160,7 @@ export default function Home() {
           fontSize: 13, fontFamily: 'var(--font-body)', fontWeight: 400,
           cursor: 'pointer', border: 'none', color: 'white'
         }}>
-          <span>Lista de espera</span>
+          <span>Waitlist</span>
         </button>
       </nav>
 
@@ -181,7 +181,7 @@ export default function Home() {
             background: 'rgba(232,84,122,0.1)', border: '1px solid rgba(232,84,122,0.25)' }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#e8547a', boxShadow: '0 0 8px #e8547a' }}/>
             <span style={{ fontSize: 12, color: '#f8c8d4', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-              Próximamente · Sevilla
+              Coming soon · Seville
             </span>
           </div>
 
@@ -201,20 +201,20 @@ export default function Home() {
   color: '#ffffff',
   marginBottom: 48, fontStyle: 'italic',
 }}>
-  <span className="hero-line">La primera IA que entiende cómo eres,{' '}</span>
-  <span className="hero-line">te presenta a{' '}
+  <span className="hero-line">The first AI that understands who you are,{' '}</span>
+  <span className="hero-line">introduces you to{' '}
   <span style={{
     background: 'linear-gradient(135deg, #f8c8d4, #e8547a 40%, #9b5de5)',
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
-  }}>tu futura pareja</span>
+  }}>your future partner</span>
   {' '}</span>
-  <span className="hero-line">y te conecta con una{' '}
+  <span className="hero-line">and connects you with a{' '}
   <span style={{
     background: 'linear-gradient(135deg, #a8edea, #4cc9f0 40%, #9b5de5)',
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
-  }}>comunidad de personas afines</span>
+  }}>community of like-minded people</span>
   {' '}</span>
-  <span className="hero-line">a través de eventos y actividades.</span>
+  <span className="hero-line">through events and activities.</span>
 </h1>
 
           <div className="reveal delay-400" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
@@ -229,10 +229,10 @@ export default function Home() {
             onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 16px 50px rgba(255,255,255,0.2)' }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
             >
-              Únete a la lista de espera
+              Join the waitlist
             </button>
             <span style={{ fontSize: 16, color: 'var(--text-muted)' }}>
-              Más de 1200 personas esperando
+              More than 1,200 people are waiting
             </span>
           </div>
         </div>
@@ -244,8 +244,8 @@ export default function Home() {
         <div className="marquee-inner" style={{ display: 'flex', gap: 64, whiteSpace: 'nowrap', width: 'max-content' }}>
           {[...Array(2)].map((_, idx) => (
             <div key={idx} style={{ display: 'flex', gap: 64 }}>
-              {['Menos swipe, más conexión', 'Personas que encajan contigo', 'Planes reales, no chats eternos',
-                'IA que te conoce de verdad', 'No más conexiones vacías', 'Tu próxima pareja te espera'].map((t, i) => (
+              {['Less swiping, more connection', 'People who fit you', 'Real plans, not endless chats',
+                'AI that truly knows you', 'No more empty connections', 'Your next partner is waiting'].map((t, i) => (
                 <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 20, fontSize: 13,
                   color: 'var(--text-muted)', letterSpacing: 1 }}>
                   <span className="gradient-text" style={{ fontSize: 10 }}>✦</span>
@@ -262,17 +262,17 @@ export default function Home() {
         <div className="orb" style={{ width: 500, height: 500, bottom: '-10%', left: '-10%', background: 'radial-gradient(circle, rgba(232,84,122,0.08) 0%, transparent 70%)' }}/>
         <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{ textAlign: 'center', marginBottom: 64 }}>
-            <div className="reveal" style={{ fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(232,84,122,0.7)', marginBottom: 20 }}>El problema</div>
+            <div className="reveal" style={{ fontSize: 18, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(232,84,122,0.7)', marginBottom: 20 }}>The problem</div>
             <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(3.2rem, 9vw, 7.5rem)', fontWeight: 300, lineHeight: 1.05, fontStyle: 'italic' }}>
-              Las apps actuales<br/>
-              <span style={{ color: 'rgba(240,236,234,0.35)', textDecoration: 'line-through' }}>no funcionan.</span>
+              Current dating apps<br/>
+              <span style={{ color: 'rgba(240,236,234,0.35)', textDecoration: 'line-through' }}>don't work.</span>
             </h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
             {[
-              { icon: '∞', title: 'Swipe infinito', desc: 'Horas mirando fotos de personas que nunca conocerás.', color: 'rgba(232,84,122,0.2)' },
-              { icon: '◌', title: 'Conversaciones vacías', desc: '"Hola" → silencio. Una y otra vez. Sin fin.', color: 'rgba(155,93,229,0.2)' },
-              { icon: '⊘', title: 'Falta de contexto social', desc: 'Conoces a alguien sin ver quién es realmente en su vida real.', color: 'rgba(76,201,240,0.15)' },
+              { icon: '∞', title: 'Endless swiping', desc: 'Hours looking at photos of people you'll never meet.', color: 'rgba(232,84,122,0.2)' },
+              { icon: '◌', title: 'Empty conversations', desc: '"Hi" → silence. Again and again. Endless.', color: 'rgba(155,93,229,0.2)' },
+              { icon: '⊘', title: 'Lack of social context', desc: 'You meet someone without seeing who they really are in real life.', color: 'rgba(76,201,240,0.15)' },
             ].map((item, i) => (
               <div key={i} className={`reveal delay-${i * 150 + 100} glass`}
                 style={{ padding: '32px 28px', borderRadius: 20, border: '1px solid rgba(255,255,255,0.06)', textAlign: 'center' }}>
@@ -314,11 +314,11 @@ export default function Home() {
           marginBottom: 20
         }}
       >
-        La solución
+        The solution
       </div>
 
       <h2 className="reveal delay-100 font-display gradient-text-cool" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', fontWeight: 300, lineHeight: 1.1, fontStyle: 'italic' }}>
-        RealFace es diferente.
+        RealFace is different.
       </h2>
 
       <p className="reveal delay-200" style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginTop: 16, fontStyle: 'italic', letterSpacing: 0.5 }}>
@@ -336,7 +336,7 @@ export default function Home() {
           marginBottom: 10,
         }}
       >
-        Primer caso de uso
+        First use case
       </div>
     </div>
 
@@ -344,23 +344,23 @@ export default function Home() {
       {[
   {
     icon: '✦',
-          label: 'No eliges por fotos',
-          sub: 'La IA entiende quién eres y qué buscas, y te conecta con personas que realmente encajan contigo. Luego tú decides.'
+          label: 'You don't choose by photos',
+          sub: 'The AI understands who you are and what you're looking for, and connects you with people who truly fit you. Then you decide.'
         },
         {
           icon: '⏱',
-          label: 'No pierdes el tiempo',
-          sub: 'Ves directamente personas que encajan contigo. Cuanto más la uses, mejores matches te dará.'
+          label: 'You don't waste time',
+          sub: 'You see people who fit you right away. The more you use it, the better your matches become.'
         },
         {
           icon: '✖',
-          label: 'Sistema anti-ghosting y sin fomo',
-          sub: 'Solo puedes hablar con 5 personas a la vez. Si quieres ver más, tienes que cerrar conversaciones de forma educada.'
+          label: 'Anti-ghosting, no-FOMO system',
+          sub: 'You can only talk to 5 people at a time. If you want to see more, you have to close conversations politely.'
         },
         {
           icon: '◉',
-          label: 'La conexión no se queda en el chat',
-          sub: 'La IA te conecta con personas compatibles y si hay feeling, pasáis a la vida real.'
+          label: 'The connection doesn't stay in the chat',
+          sub: 'The AI connects you with compatible people and, if there's chemistry, you take it into real life.'
         }
       ].map((item, i) => (
         <div
@@ -397,9 +397,9 @@ export default function Home() {
         <div className="orb" style={{ width: 700, height: 700, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'radial-gradient(circle, rgba(155,93,229,0.1) 0%, transparent 60%)' }}/>
         <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{ textAlign: 'center', marginBottom: 80 }}>
-            <div className="reveal" style={{ fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(180,130,255,0.85)', marginBottom: 20 }}>La magia</div>
+            <div className="reveal" style={{ fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(180,130,255,0.85)', marginBottom: 20 }}>The magic</div>
             <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.3rem, 6.5vw, 4.6rem)', fontWeight: 300, lineHeight: 1.15, fontStyle: 'italic' }}>
-              Te conoce antes<br/><span className="gradient-text">de conectarte.</span>
+              It gets to know you before<br/><span className="gradient-text">connecting you.</span>
             </h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 48, alignItems: 'center' }}>
@@ -409,14 +409,14 @@ export default function Home() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(232,84,122,0.4), rgba(155,93,229,0.4))', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>◈</div>
-                    <div><div style={{ fontSize: 13, fontWeight: 500 }}>Sofía & Tú</div><div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Análisis IA</div></div>
+                    <div><div style={{ fontSize: 13, fontWeight: 500 }}>Sofía & You</div><div style={{ fontSize: 11, color: 'var(--text-muted)' }}>AI Analysis</div></div>
                   </div>
                   <div className="gradient-text" style={{ fontSize: '1.5rem', fontWeight: 300, fontFamily: 'var(--font-display)' }}>87%</div>
                 </div>
                 {[
-                  { label: 'Valores compartidos', val: 92, color: '#e8547a' },
-                  { label: 'Estilo de comunicación', val: 84, color: '#9b5de5' },
-                  { label: 'Alineación emocional', val: 88, color: '#4cc9f0' },
+                  { label: 'Shared values', val: 92, color: '#e8547a' },
+                  { label: 'Communication style', val: 84, color: '#9b5de5' },
+                  { label: 'Emotional alignment', val: 88, color: '#4cc9f0' },
                 ].map((bar, i) => (
                   <div key={i} style={{ marginBottom: 12 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, fontSize: 11, color: 'var(--text-muted)' }}>
@@ -431,9 +431,9 @@ export default function Home() {
             </div>
             <div className="reveal-right" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
               {[
-                { icon: '◉', title: 'La IA te aprende', body: 'Cuanto más usas RealFace, mejor te entiende. No rellenas formularios. Simplemente eres tú.' },
-                { icon: '◈', title: 'Personalidad, valores, comportamiento', body: 'Analiza cómo te expresas, qué te importa y cómo te relacionas con el mundo.' },
-                { icon: '✦', title: 'Match antes de hablar', body: 'Solo ves personas que ya tienen sentido para ti. No hay sorpresas desagradables.' },
+                { icon: '◉', title: 'The AI learns you', body: 'The more you use RealFace, the better it understands you. You don't fill out forms. You simply be yourself.' },
+                { icon: '◈', title: 'Personality, values, behavior', body: 'It analyzes how you express yourself, what matters to you, and how you relate to the world.' },
+                { icon: '✦', title: 'Match before you talk', body: 'You only see people who already make sense for you. No unpleasant surprises.' },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 20 }}>
                   <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -455,20 +455,20 @@ export default function Home() {
         <div className="orb" style={{ width: 500, height: 500, top: '5%', left: '-10%', background: 'radial-gradient(circle, rgba(76,201,240,0.1) 0%, transparent 70%)' }}/>
         <div style={{ maxWidth: 1000, margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{ textAlign: 'center', marginBottom: 72 }}>
-            <div className="reveal" style={{ fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(76,201,240,0.7)', marginBottom: 20 }}>Segundo caso de uso</div>
+            <div className="reveal" style={{ fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(76,201,240,0.7)', marginBottom: 20 }}>Second use case</div>
             <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 300, lineHeight: 1.2, fontStyle: 'italic' }}>
-              Eventos, actividades y comunidades<br/><span style={{ color: 'var(--text-muted)' }}> Conecta con personas afines.</span>
+              Events, activities and communities<br/><span style={{ color: 'var(--text-muted)' }}> Connect with like-minded people.</span>
             </h2>
             <p className="reveal delay-200" style={{ fontSize: '1.1rem', color: 'var(--text-muted)', maxWidth: 500, margin: '20px auto 0', lineHeight: 1.7 }}>
-              Crea tus propios planes o Únete a comunidades y eventos ya organizados.<br/>Conoce gente que piensa como tú y comparte tus intereses
+              Create your own plans or join communities and events that are already organized.<br/>Meet people who think like you and share your interests
             </p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             {[
-              { emoji: '🍽', label: 'Cenas', desc: 'Comparte mesa con personas interesantes.' },
-              { emoji: '⛰', label: 'Deporte', desc: 'Entrena o explora con quien tiene tu ritmo.' },
-              { emoji: '✈️', label: 'Escapadas', desc: 'Planes de viaje con personas compatibles.' },
-              { emoji: '◈', label: 'Eventos', desc: 'Conciertos, exposiciones, cultura.' },
+              { emoji: '🍽', label: 'Dinners', desc: 'Share a table with interesting people.' },
+              { emoji: '⛰', label: 'Sports', desc: 'Train or explore with people who match your pace.' },
+              { emoji: '✈️', label: 'Getaways', desc: 'Travel plans with compatible people.' },
+              { emoji: '◈', label: 'Events', desc: 'Concerts, exhibitions, culture.' },
             ].map((plan, i) => (
               <div key={i} className={`reveal delay-${i * 100 + 100} card-hover glass`}
                 style={{ padding: '28px 24px', borderRadius: 20, textAlign: 'center', cursor: 'default' }}>
@@ -490,9 +490,9 @@ export default function Home() {
           }}>
             {[
               { src: '/polaroid-1.jpg', label: 'Sevilla, 2:14 AM', rotate: '-4deg', delay: '0s' },
-              { src: '/polaroid-2.jpg', label: 'En la ofi', rotate: '2.5deg', delay: '1.2s' },
-              { src: '/polaroid-3.jpg', label: 'Debi tirar más fotos' , rotate: '-2deg', delay: '0.6s' },
-              { src: '/polaroid-4.jpg', label: 'En el episodio anterior..', rotate: '3.5deg', delay: '1.8s' },
+              { src: '/polaroid-2.jpg', label: 'At the office', rotate: '2.5deg', delay: '1.2s' },
+              { src: '/polaroid-3.jpg', label: 'I should have taken more photos' , rotate: '-2deg', delay: '0.6s' },
+              { src: '/polaroid-4.jpg', label: 'Previously on..', rotate: '3.5deg', delay: '1.8s' },
               { src: '/polaroid-5.jpg', label: 'Sunday vibes', rotate: '-1.5deg', delay: '0.9s' },
               { src: '/polaroid-6.jpg', label: 'Barcelona blues', rotate: '2deg', delay: '2.1s' },
               { src: '/polaroid-7.jpg', label: 'Alexa, skip to summer', rotate: '-3deg', delay: '1.5s' },
@@ -560,7 +560,7 @@ export default function Home() {
       <section style={{ padding: 'clamp(60px,10vw,100px) 24px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 16 }}>
-            {['Menos swipe, más conexión', 'Personas que encajan contigo', 'Planes reales, no chats eternos'].map((prop, i) => (
+            {['Less swiping, more connection', 'People who fit you', 'Real plans, not endless chats'].map((prop, i) => (
               <div key={i} className={`reveal delay-${i * 150} glass`} style={{ padding: '14px 28px', borderRadius: 50, border: '1px solid rgba(255,255,255,0.08)' }}>
                 <span className="font-display" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', fontWeight: 300, fontStyle: 'italic' }}>{prop}</span>
               </div>
@@ -577,18 +577,18 @@ export default function Home() {
       }}>
         <div className="orb" style={{ width: 700, height: 700, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'radial-gradient(circle, rgba(155,93,229,0.15) 0%, transparent 60%)' }}/>
         <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-          <div className="reveal" style={{ fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(232,84,122,0.7)', marginBottom: 24 }}>Lista de espera</div>
+          <div className="reveal" style={{ fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(232,84,122,0.7)', marginBottom: 24 }}>Waitlist</div>
           <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.5rem, 7vw, 5rem)', fontWeight: 300, lineHeight: 1.1, fontStyle: 'italic', marginBottom: 16 }}>
-            Deja de elegir<br/><span className="gradient-text">a ciegas.</span>
+            Stop choosing<br/><span className="gradient-text">blindly.</span>
           </h2>
           <p className="reveal delay-200" style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: 48, lineHeight: 1.7 }}>
-            Sé de los primeros en descubrir<br/>una forma diferente de conectar.
+            Be among the first to discover<br/>a different way to connect.
           </p>
           <div className="reveal delay-300" style={{ display: 'flex', justifyContent: 'center' }}>
             <WaitlistForm large />
           </div>
           <p className="reveal delay-400" style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 20 }}>
-            Sin spam. Solo te avisamos cuando esté listo.
+            No spam. We'll only let you know when it's ready.
           </p>
         </div>
       </section>
@@ -601,7 +601,7 @@ export default function Home() {
             <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, #e8547a, #9b5de5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, margin: '0 auto', boxShadow: '0 0 60px rgba(232,84,122,0.4), 0 0 120px rgba(155,93,229,0.2)' }}>✦</div>
           </div>
           <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.5rem, 8vw, 5.5rem)', fontWeight: 300, lineHeight: 1.1, fontStyle: 'italic', marginBottom: 32 }}>
-            <span className="gradient-text">El futuro</span><br/>de conocer personas.
+            <span className="gradient-text">The future</span><br/>of meeting people.
           </h2>
           <div className="reveal delay-200">
             <button onClick={scrollToWaitlist} style={{
@@ -615,7 +615,7 @@ export default function Home() {
             onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 16px 50px rgba(255,255,255,0.2)' }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
             >
-              Únete a la lista de espera
+              Join the waitlist
             </button>
           </div>
         </div>
@@ -627,10 +627,10 @@ export default function Home() {
           <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'linear-gradient(135deg, #e8547a, #9b5de5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10 }}>✦</div>
           <span className="font-display" style={{ fontSize: '1rem', letterSpacing: 2, color: 'var(--text-muted)' }}>RealFace</span>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>© 2025 RealFace · Todos los derechos reservados</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>© 2025 RealFace · All rights reserved</div>
         <div style={{ display: 'flex', gap: 24, fontSize: 12, color: 'var(--text-muted)' }}>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Privacidad</a>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Términos</a>
+          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Privacy</a>
+          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Terms</a>
         </div>
       </footer>
 

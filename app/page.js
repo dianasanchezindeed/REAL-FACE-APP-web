@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
+const LOGO_MARK = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABACAMAAACz8qB+AAAASFBMVEX/1bX/6az/0rP/y6r/38T/f3//u7T//3//483/4cf/5Mv/rnn/AAD//wD/fz8AAAD/1bf/y6n/4sn/3cL//v7/0rP/yqf/qqqd8RwwAAAAGHRSTlOkEFnkmAILAhpa2BABAQgA69T49ALYkQMNT2smAAADwElEQVR42q2Yi5ajIAyGCYqobTcIQd//TTcBvM121LOanjrH2n4TQi6/Kq3UyJaPX0xDi4jAb4P83e9W705q1QaXrRp+M6UnJMK3AeWGYfu9is1VbrHgA797hbWLMcr7V2hVKY1I/EL171X59UrNUGrz6XBAHQZXt8juGhp/LsjtTKChV4AqncZD6OAicGDNB374GndIJgaBWmr7Qj1gSoCA1z8hrJ/t3AyrcUwJuxDPPOWr1cCeoixs/mgbT1m3gL3PUKJ+u4Zqa5tVSgQmIgMxX9ov22+MoWixU7+lqRoqF0vkotO8fIu6XCpJKTb/zdYxVFLlNwPQg1t3A3JinZlAOQKwtWkxK9yxWqCyA0jyhfRF+m6gjv/n27wQ9Ro9QIsXPT00M5VMFhtTF7gPRWObJXFiczmmJ/bKAQiSjfAU9E0QS8l4/RSUOXUpa6+weQzalbL26jFPJ2x9gdaPQv3TUMAuQf2T0IY66T7PQiesfchY/dTu83CQ7itcTv7pGWgzO+p9fD20fJ54sk0J+lRDAXxFX6ihkdWnpmmtNcUoHT6XoTRN+FJ+hqpL7fRfqG2IX8nYH/F0SGMtpekLpzfCNzU1qk2rOfEUtEqjN7s6phHV+bAfvVlUjWte/IDyrOTZWMYjOxBDrs+y9Vagis8LcysVfodO2PXbEe78XPTMbJKY0C6snsYrUGmdnmPowgqT8gwpRSc01O7U00bXHEClIYnM9JtlJ25isqP1jjnEK56KWJrLJyujHIbxj/ym3e3SXn4dQS2BW9wrh6AaUeeJuYFuc2CojqDSkvo1knLgHcLpk+pVQuJGXawTm0/gKE95L/rUkIIrMQhATZlUaajq/6r9LKn0EgKVKh46n8WtzkKqmeuODwAvewydl1GXHhqc6BKCusRTn7Wqr56SNdY2FkrFBze86EMS0RvQTR34HFyZIlyg/jbU2DbmJOBbIzBGpsptKDunZ2hSJlNRqregH/vqizIJoszlJkJuKG5Bk2sh5aYo8ym1qNvQtDcF6jpG0UdVt6HsnC9M14Pl8QL3oZj0ft7zIKx0rs8EhToTJ7B2OuCiYFFd3YXK3izTQ5ob7919KFnoC3SoePkf08bbUGl4boYqsuL6A1Bq1Dw30xa9qcX3XS3FabQOYzAXRN8V1SdpVEZc3iN6AErUrs9CLt3xXhG90/KIQ2bmQ1CRJctTH31Bn1+8kdDz0xSn6CEoGVLLExp9rtAvQSXjq/LMqIrt2zwC5bCqVFPSo9VpVC9COaoix2Lfxz6ePkj4C/n8NGn/yFCkAAAAAElFTkSuQmCC'
+
 const supabase = createClient(
   'https://jgfacgvwhipnafbzcjem.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnZmFjZ3Z3aGlwbmFmYnpjamVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMjYwNDQsImV4cCI6MjA4NzYwMjA0NH0.qQB8nZ_YXf0pCnHDglFxfeUe5riDHqRVZxLJxOBznc4'
@@ -148,12 +150,9 @@ export default function Home() {
         backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255,255,255,0.05)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 28, height: 28, borderRadius: '50%',
-            background: 'linear-gradient(135deg, #e8547a, #9b5de5)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 13, boxShadow: '0 0 16px rgba(232,84,122,0.4)' }}>✦</div>
-          <span className="font-display" style={{ fontSize: '1.2rem', fontWeight: 300, letterSpacing: 2 }}>RealFace</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <img src={LOGO_MARK} alt="RealFace" width={37} height={28} style={{ height: 28, width: 'auto', display: 'block' }}/>
+          <span style={{ fontSize: 13, fontWeight: 400, letterSpacing: '0.32em', color: '#e5c0a6', lineHeight: 1 }}>REALFACE</span>
         </div>
         <button onClick={scrollToWaitlist} className="btn-primary" style={{
           padding: '8px 20px', borderRadius: 50,

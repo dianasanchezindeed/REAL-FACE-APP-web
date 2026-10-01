@@ -200,7 +200,7 @@ export default function Home() {
   color: '#ffffff',
   marginBottom: 48, fontStyle: 'italic',
 }}>
-  <span className="hero-line">La app de citas con,{' '}</span>
+  <span className="hero-line">La app de citas con{' '}
   <span style={{
     background: 'linear-gradient(135deg, #f8c8d4, #e8547a 40%, #9b5de5)',
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'

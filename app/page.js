@@ -249,6 +249,80 @@ export default function Home() {
         </div>
       </div>
 
+      {/* 87% */}
+      <section style={{ padding: 'clamp(80px,12vw,140px) 24px',
+        background: 'linear-gradient(160deg, rgba(155,93,229,0.05) 0%, rgba(232,84,122,0.05) 100%)',
+        borderTop: '1px solid rgba(255,255,255,0.04)', position: 'relative', overflow: 'hidden' }}>
+        <div className="orb" style={{ width: 700, height: 700, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'radial-gradient(circle, rgba(155,93,229,0.1) 0%, transparent 60%)' }}/>
+        <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+          <div style={{ textAlign: 'center', marginBottom: 80 }}>
+            <div className="reveal" style={{ fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(180,130,255,0.85)', marginBottom: 20 }}>La magia</div>
+            <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.3rem, 6.5vw, 4.6rem)', fontWeight: 300, lineHeight: 1.15, fontStyle: 'italic' }}>
+              Te conoce antes<br/><span className="gradient-text">de conectarte.</span>
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 48, alignItems: 'center' }}>
+            <div className="reveal-left" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
+              <CompatCircle />
+              <div className="glass" style={{ padding: '24px 28px', borderRadius: 20, width: '100%', maxWidth: 300, border: '1px solid rgba(232,84,122,0.15)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(232,84,122,0.4), rgba(155,93,229,0.4))', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>◈</div>
+                    <div><div style={{ fontSize: 13, fontWeight: 500 }}>Sofía & Tú</div><div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Análisis IA</div></div>
+                  </div>
+                  <div className="gradient-text" style={{ fontSize: '1.5rem', fontWeight: 300, fontFamily: 'var(--font-display)' }}>87%</div>
+                </div>
+                {[
+                  { label: 'Valores compartidos', val: 92, color: '#e8547a' },
+                  { label: 'Estilo de comunicación', val: 84, color: '#9b5de5' },
+                  { label: 'Alineación emocional', val: 88, color: '#4cc9f0' },
+                ].map((bar, i) => (
+                  <div key={i} style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, fontSize: 11, color: 'var(--text-muted)' }}>
+                      <span>{bar.label}</span><span style={{ color: bar.color }}>{bar.val}%</span>
+                    </div>
+                    <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)' }}>
+                      <div style={{ height: '100%', width: `${bar.val}%`, borderRadius: 2, background: `linear-gradient(90deg, ${bar.color}, ${bar.color}80)`, boxShadow: `0 0 8px ${bar.color}60` }}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="reveal-right" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+              {[
+                { icon: '◉', title: 'La IA te aprende', body: 'Cuanto más usas RealFace, mejor te entiende. No rellenas formularios. Simplemente eres tú.' },
+                { icon: '◈', title: 'Personalidad, valores, comportamiento', body: 'Analiza cómo te expresas, qué te importa y cómo te relacionas con el mundo.' },
+                { icon: '✦', title: 'Match antes de hablar', body: 'Solo ves personas que ya tienen sentido para ti. No hay sorpresas desagradables.' },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: 20 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span className="gradient-text" style={{ fontSize: 18 }}>{item.icon}</span>
+                  </div>
+                  <div>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: 6 }}>{item.title}</h4>
+                    <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.65 }}>{item.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* VALUE PROPS */}
+      <section style={{ padding: 'clamp(60px,10vw,100px) 24px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 16 }}>
+            {['Menos swipe, más conexión', 'Personas que encajan contigo', 'Planes reales, no chats eternos'].map((prop, i) => (
+              <div key={i} className={`reveal delay-${i * 150} glass`} style={{ padding: '14px 28px', borderRadius: 50, border: '1px solid rgba(255,255,255,0.08)' }}>
+                <span className="font-display" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', fontWeight: 300, fontStyle: 'italic' }}>{prop}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* PROBLEMA */}
       <section style={{ padding: 'clamp(80px,12vw,140px) 24px', background: 'rgba(255,255,255,0.01)', position: 'relative' }}>
         <div className="orb" style={{ width: 500, height: 500, bottom: '-10%', left: '-10%', background: 'radial-gradient(circle, rgba(232,84,122,0.08) 0%, transparent 70%)' }}/>
@@ -381,80 +455,6 @@ export default function Home() {
 
   </div>
 </section>
-
-      {/* 87% */}
-      <section style={{ padding: 'clamp(80px,12vw,140px) 24px',
-        background: 'linear-gradient(160deg, rgba(155,93,229,0.05) 0%, rgba(232,84,122,0.05) 100%)',
-        borderTop: '1px solid rgba(255,255,255,0.04)', position: 'relative', overflow: 'hidden' }}>
-        <div className="orb" style={{ width: 700, height: 700, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'radial-gradient(circle, rgba(155,93,229,0.1) 0%, transparent 60%)' }}/>
-        <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 2 }}>
-          <div style={{ textAlign: 'center', marginBottom: 80 }}>
-            <div className="reveal" style={{ fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(180,130,255,0.85)', marginBottom: 20 }}>La magia</div>
-            <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.3rem, 6.5vw, 4.6rem)', fontWeight: 300, lineHeight: 1.15, fontStyle: 'italic' }}>
-              Te conoce antes<br/><span className="gradient-text">de conectarte.</span>
-            </h2>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 48, alignItems: 'center' }}>
-            <div className="reveal-left" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
-              <CompatCircle />
-              <div className="glass" style={{ padding: '24px 28px', borderRadius: 20, width: '100%', maxWidth: 300, border: '1px solid rgba(232,84,122,0.15)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(232,84,122,0.4), rgba(155,93,229,0.4))', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>◈</div>
-                    <div><div style={{ fontSize: 13, fontWeight: 500 }}>Sofía & Tú</div><div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Análisis IA</div></div>
-                  </div>
-                  <div className="gradient-text" style={{ fontSize: '1.5rem', fontWeight: 300, fontFamily: 'var(--font-display)' }}>87%</div>
-                </div>
-                {[
-                  { label: 'Valores compartidos', val: 92, color: '#e8547a' },
-                  { label: 'Estilo de comunicación', val: 84, color: '#9b5de5' },
-                  { label: 'Alineación emocional', val: 88, color: '#4cc9f0' },
-                ].map((bar, i) => (
-                  <div key={i} style={{ marginBottom: 12 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, fontSize: 11, color: 'var(--text-muted)' }}>
-                      <span>{bar.label}</span><span style={{ color: bar.color }}>{bar.val}%</span>
-                    </div>
-                    <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)' }}>
-                      <div style={{ height: '100%', width: `${bar.val}%`, borderRadius: 2, background: `linear-gradient(90deg, ${bar.color}, ${bar.color}80)`, boxShadow: `0 0 8px ${bar.color}60` }}/>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="reveal-right" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-              {[
-                { icon: '◉', title: 'La IA te aprende', body: 'Cuanto más usas RealFace, mejor te entiende. No rellenas formularios. Simplemente eres tú.' },
-                { icon: '◈', title: 'Personalidad, valores, comportamiento', body: 'Analiza cómo te expresas, qué te importa y cómo te relacionas con el mundo.' },
-                { icon: '✦', title: 'Match antes de hablar', body: 'Solo ves personas que ya tienen sentido para ti. No hay sorpresas desagradables.' },
-              ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: 20 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span className="gradient-text" style={{ fontSize: 18 }}>{item.icon}</span>
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: 6 }}>{item.title}</h4>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.65 }}>{item.body}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* VALUE PROPS */}
-      <section style={{ padding: 'clamp(60px,10vw,100px) 24px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 16 }}>
-            {['Menos swipe, más conexión', 'Personas que encajan contigo', 'Planes reales, no chats eternos'].map((prop, i) => (
-              <div key={i} className={`reveal delay-${i * 150} glass`} style={{ padding: '14px 28px', borderRadius: 50, border: '1px solid rgba(255,255,255,0.08)' }}>
-                <span className="font-display" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', fontWeight: 300, fontStyle: 'italic' }}>{prop}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* WAITLIST */}
       <section id="waitlist" style={{

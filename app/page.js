@@ -290,9 +290,10 @@ export default function Home() {
             </div>
             <div className="reveal-right" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
               {[
-                { icon: '◉', title: 'La IA te aprende', body: 'Cuanto más usas RealFace, mejor te entiende. No rellenas formularios. Simplemente eres tú.' },
-                { icon: '◈', title: 'Personalidad, valores, comportamiento', body: 'Analiza cómo te expresas, qué te importa y cómo te relacionas con el mundo.' },
-                { icon: '✦', title: 'Match antes de hablar', body: 'Solo ves personas que ya tienen sentido para ti. No hay sorpresas desagradables.' },
+                { icon: "01", title: "Primero, te conocemos", body: "Responde a una serie de preguntas a través de nuestra IA. Descubrimos tu personalidad, tus valores, lo que buscas y qué es importante para ti en una relación." },
+                { icon: "02", title: "Encontramos afinidades", body: "Analizamos vuestra personalidad, vuestros valores, vuestra forma de pensar y vuestra compatibilidad emocional para identificar a las personas más afines a ti." },
+                { icon: "03", title: "Descubre tu compatibilidad", body: "Te mostramos uno o varios perfiles de las personas compatibles. Podrás ver su perfil, fotos, edad y biografía, además de tu porcentaje de compatibilidad y un análisis personalizado que explica por qué encajáis." },
+                { icon: "04", title: "La cita", body: "Si ambos dais match, el chat os propondrá varios lugares, días y horas para que elijáis. Cada uno realiza un pago simbólico para confirmar la cita. El pago queda pendiente hasta que ambos hayáis pagado; solo entonces la cita queda confirmada. Y hablaréis el día de la cita, en persona. No hay chat, para no perder el tiempo con nadie que no tenga intención real de quedar." },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 20 }}>
                   <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

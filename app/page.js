@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import { track, detectSource } from './tracking'
 
 const LOGO_MARK = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFQAAABACAMAAACz8qB+AAAASFBMVEX/1bX/6az/0rP/y6r/38T/f3//u7T//3//483/4cf/5Mv/rnn/AAD//wD/fz8AAAD/1bf/y6n/4sn/3cL//v7/0rP/yqf/qqqd8RwwAAAAGHRSTlOkEFnkmAILAhpa2BABAQgA69T49ALYkQMNT2smAAADwElEQVR42q2Yi5ajIAyGCYqobTcIQd//TTcBvM121LOanjrH2n4TQi6/Kq3UyJaPX0xDi4jAb4P83e9W705q1QaXrRp+M6UnJMK3AeWGYfu9is1VbrHgA797hbWLMcr7V2hVKY1I/EL171X59UrNUGrz6XBAHQZXt8juGhp/LsjtTKChV4AqncZD6OAicGDNB374GndIJgaBWmr7Qj1gSoCA1z8hrJ/t3AyrcUwJuxDPPOWr1cCeoixs/mgbT1m3gL3PUKJ+u4Zqa5tVSgQmIgMxX9ov22+MoWixU7+lqRoqF0vkotO8fIu6XCpJKTb/zdYxVFLlNwPQg1t3A3JinZlAOQKwtWkxK9yxWqCyA0jyhfRF+m6gjv/n27wQ9Ro9QIsXPT00M5VMFhtTF7gPRWObJXFiczmmJ/bKAQiSjfAU9E0QS8l4/RSUOXUpa6+weQzalbL26jFPJ2x9gdaPQv3TUMAuQf2T0IY66T7PQiesfchY/dTu83CQ7itcTv7pGWgzO+p9fD20fJ54sk0J+lRDAXxFX6ihkdWnpmmtNcUoHT6XoTRN+FJ+hqpL7fRfqG2IX8nYH/F0SGMtpekLpzfCNzU1qk2rOfEUtEqjN7s6phHV+bAfvVlUjWte/IDyrOTZWMYjOxBDrs+y9Vagis8LcysVfodO2PXbEe78XPTMbJKY0C6snsYrUGmdnmPowgqT8gwpRSc01O7U00bXHEClIYnM9JtlJ25isqP1jjnEK56KWJrLJyujHIbxj/ym3e3SXn4dQS2BW9wrh6AaUeeJuYFuc2CojqDSkvo1knLgHcLpk+pVQuJGXawTm0/gKE95L/rUkIIrMQhATZlUaajq/6r9LKn0EgKVKh46n8WtzkKqmeuODwAvewydl1GXHhqc6BKCusRTn7Wqr56SNdY2FkrFBze86EMS0RvQTR34HFyZIlyg/jbU2DbmJOBbIzBGpsptKDunZ2hSJlNRqregH/vqizIJoszlJkJuKG5Bk2sh5aYo8ym1qNvQtDcF6jpG0UdVt6HsnC9M14Pl8QL3oZj0ft7zIKx0rs8EhToTJ7B2OuCiYFFd3YXK3izTQ5ob7919KFnoC3SoePkf08bbUGl4boYqsuL6A1Bq1Dw30xa9qcX3XS3FabQOYzAXRN8V1SdpVEZc3iN6AErUrs9CLt3xXhG90/KIQ2bmQ1CRJctTH31Bn1+8kdDz0xSn6CEoGVLLExp9rtAvQSXjq/LMqIrt2zwC5bCqVFPSo9VpVC9COaoix2Lfxz6ePkj4C/n8NGn/yFCkAAAAAElFTkSuQmCC'
 
@@ -21,75 +22,181 @@ function useReveal() {
   }, [])
 }
 
-function WaitlistForm({ large = false }) {
-  const [email, setEmail] = useState('')
+const CITIES = ['Madrid', 'Barcelona', 'Sevilla', 'Otra ciudad']
+const PHONES = [
+  { value: 'ios', label: 'iPhone' },
+  { value: 'android', label: 'Android' },
+  { value: 'unknown', label: 'No lo sé' },
+]
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+const labelStyle = { display: 'block', fontSize: 13, color: 'rgba(240,236,234,0.8)', marginBottom: 8, textAlign: 'left' }
+
+function WaitlistForm() {
+  const [form, setForm] = useState({ name: '', age: '', city: '', email: '', phone_os: '', privacy: false, marketing: false })
+  const [errors, setErrors] = useState({})
   const [done, setDone] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const viewed = useRef(false)
+  const ref = useRef()
 
-  const submit = async (e) => {
-    e.preventDefault()
-    if (!email) return
+  // Medición: visualización del formulario (una vez, sin datos personales)
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !viewed.current) {
+        viewed.current = true
+        track('ViewContent', { content_name: 'formulario_registro' })
+      }
+    }, { threshold: 0.4 })
+    if (ref.current) io.observe(ref.current)
+    return () => io.disconnect()
+  }, [])
+
+  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setErrors(e => ({ ...e, [k]: undefined })) }
+
+  const validate = () => {
+    const e = {}
+    const name = form.name.trim()
+    const age = Number(form.age)
+    if (name.length < 2 || name.length > 60) e.name = 'Escribe tu nombre.'
+    if (!form.age || !Number.isInteger(age)) e.age = 'Escribe tu edad.'
+    else if (age < 18) e.age = 'REALFACE es solo para mayores de 18 años.'
+    else if (age > 99) e.age = 'Revisa tu edad.'
+    if (!CITIES.includes(form.city)) e.city = 'Elige tu ciudad.'
+    if (!EMAIL_RE.test(form.email.trim())) e.email = 'Escribe un correo válido.'
+    if (!PHONES.some(p => p.value === form.phone_os)) e.phone_os = 'Elige una opción.'
+    if (!form.privacy) e.privacy = 'Debes aceptar la política de privacidad.'
+    return e
+  }
+
+  const submit = async (ev) => {
+    ev.preventDefault()
+    if (loading) return
+    const e = validate()
+    setErrors(e)
+    if (Object.keys(e).length) return
     setLoading(true)
     setError('')
-
-    const { error } = await supabase
-      .from('waitlist')
-      .insert([{ email }])
-
+    const origin = detectSource()
+    const { error } = await supabase.rpc('register_web_lead', {
+      p_name: form.name.trim(),
+      p_age: Number(form.age),
+      p_city: form.city,
+      p_email: form.email.trim().toLowerCase(),
+      p_phone_os: form.phone_os,
+      p_privacy_accepted: form.privacy,
+      p_marketing_consent: form.marketing,
+      p_source: origin.source,
+      p_utm_source: origin.utm_source,
+      p_utm_medium: origin.utm_medium,
+      p_utm_campaign: origin.utm_campaign,
+    })
     setLoading(false)
-
     if (error) {
-      if (error.code === '23505') {
-        setDone(true)
-      } else {
-        setError('Algo falló. Inténtalo de nuevo.')
-      }
-    } else {
-      setDone(true)
+      setError('Algo falló. Inténtalo de nuevo.')
+      return
     }
+    track('Lead')
+    setDone(true)
   }
 
   if (done) return (
-    <div className={`flex items-center gap-3 glass rounded-2xl px-6 py-4 ${large ? 'text-lg' : ''}`}
-         style={{ border: '1px solid rgba(232,84,122,0.3)', animation: 'float 4s ease-in-out infinite' }}>
-      <span style={{ fontSize: large ? 28 : 20 }}>✦</span>
-      <span className="gradient-text font-display" style={{ fontSize: large ? '1.3rem' : '1rem', fontStyle: 'italic' }}>
-        Estás dentro. Te avisaremos pronto.
-      </span>
+    <div className="glass rounded-2xl" style={{ padding: '32px 28px', width: '100%', maxWidth: 520,
+      border: '1px solid rgba(232,84,122,0.3)', textAlign: 'center' }}>
+      <div className="gradient-text" style={{ fontSize: 28, marginBottom: 12 }}>✦</div>
+      <p className="gradient-text font-display" style={{ fontSize: '1.6rem', fontStyle: 'italic', marginBottom: 10 }}>
+        ¡Gracias por tu interés en REALFACE!
+      </p>
+      <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+        Ya tenemos tus datos. Te avisaremos cuando puedas empezar a utilizar REALFACE.
+      </p>
     </div>
   )
 
+  const errStyle = { fontSize: 12, color: '#e8547a', marginTop: 6, textAlign: 'left' }
+  const inputCls = 'input-field rounded-2xl w-full px-5 py-4 text-base'
+
   return (
-    <div style={{ width: '100%', maxWidth: 480 }}>
-      <form onSubmit={submit} className={`flex ${large ? 'flex-col sm:flex-row gap-3' : 'gap-2'} w-full`}>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          placeholder="tu@email.com"
-          className={`input-field rounded-2xl flex-1 ${large ? 'px-5 py-4 text-base' : 'px-4 py-3 text-sm'}`}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className={`rounded-2xl font-medium whitespace-nowrap ${large ? 'px-8 py-4 text-base' : 'px-5 py-3 text-sm'}`}
-          style={{
-            fontFamily: 'var(--font-body)',
-            background: 'linear-gradient(135deg, #ffffff, #f0d4db)',
-            color: '#1a0a10',
-            border: 'none',
-            cursor: 'pointer',
-            fontWeight: 600,
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          {loading ? '...' : 'Unirme'}
-        </button>
-      </form>
-      {error && <p style={{ fontSize: 12, color: '#e8547a', marginTop: 8 }}>{error}</p>}
-    </div>
+    <form ref={ref} onSubmit={submit} noValidate className="glass rounded-2xl"
+      style={{ width: '100%', maxWidth: 520, padding: 'clamp(20px, 4vw, 32px)', display: 'flex', flexDirection: 'column', gap: 18 }}>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: 12 }}>
+        <div>
+          <label htmlFor="rf-name" style={labelStyle}>Nombre</label>
+          <input id="rf-name" type="text" autoComplete="given-name" maxLength={60} value={form.name}
+            onChange={e => set('name', e.target.value)} placeholder="Tu nombre" className={inputCls}/>
+          {errors.name && <p style={errStyle}>{errors.name}</p>}
+        </div>
+        <div>
+          <label htmlFor="rf-age" style={labelStyle}>Edad</label>
+          <input id="rf-age" type="number" inputMode="numeric" min={18} max={99} value={form.age}
+            onChange={e => set('age', e.target.value)} placeholder="18+" className={inputCls}/>
+          {errors.age && <p style={errStyle}>{errors.age}</p>}
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="rf-city" style={labelStyle}>Ciudad</label>
+        <select id="rf-city" value={form.city} onChange={e => set('city', e.target.value)} className={inputCls}
+          style={{ appearance: 'none', color: form.city ? 'var(--text-primary)' : 'rgba(240,236,234,0.3)', cursor: 'pointer' }}>
+          <option value="" disabled style={{ color: '#1a0a10' }}>Elige tu ciudad</option>
+          {CITIES.map(c => <option key={c} value={c} style={{ color: '#1a0a10' }}>{c}</option>)}
+        </select>
+        {errors.city && <p style={errStyle}>{errors.city}</p>}
+      </div>
+
+      <div>
+        <label htmlFor="rf-email" style={labelStyle}>Correo electrónico</label>
+        <input id="rf-email" type="email" autoComplete="email" maxLength={254} value={form.email}
+          onChange={e => set('email', e.target.value)} placeholder="tu@email.com" className={inputCls}/>
+        {errors.email && <p style={errStyle}>{errors.email}</p>}
+      </div>
+
+      <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+        <legend style={labelStyle}>¿Qué móvil utilizas?</legend>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>
+          {PHONES.map(p => {
+            const active = form.phone_os === p.value
+            return (
+              <button type="button" key={p.value} onClick={() => set('phone_os', p.value)} aria-pressed={active}
+                className="rounded-2xl" style={{
+                  padding: '12px 8px', fontSize: 14, cursor: 'pointer', fontFamily: 'var(--font-body)',
+                  color: 'var(--text-primary)',
+                  background: active ? 'rgba(232,84,122,0.15)' : 'rgba(255,255,255,0.04)',
+                  border: active ? '1px solid rgba(232,84,122,0.6)' : '1px solid rgba(255,255,255,0.1)',
+                  transition: 'all 0.3s ease',
+                }}>{p.label}</button>
+            )
+          })}
+        </div>
+        {errors.phone_os && <p style={errStyle}>{errors.phone_os}</p>}
+      </fieldset>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, textAlign: 'left' }}>
+        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, color: 'rgba(240,236,234,0.8)', lineHeight: 1.5, cursor: 'pointer' }}>
+          <input type="checkbox" checked={form.privacy} onChange={e => set('privacy', e.target.checked)}
+            style={{ marginTop: 3, accentColor: '#e8547a', width: 16, height: 16, flexShrink: 0 }}/>
+          <span>He leído y acepto la <a href="/privacidad" target="_blank" rel="noopener" style={{ color: '#f8c8d4', textDecoration: 'underline' }}>política de privacidad</a>.</span>
+        </label>
+        {errors.privacy && <p style={{ ...errStyle, marginTop: -4 }}>{errors.privacy}</p>}
+        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, cursor: 'pointer' }}>
+          <input type="checkbox" checked={form.marketing} onChange={e => set('marketing', e.target.checked)}
+            style={{ marginTop: 3, accentColor: '#e8547a', width: 16, height: 16, flexShrink: 0 }}/>
+          <span>Opcional: quiero recibir también novedades y promociones de REALFACE.</span>
+        </label>
+      </div>
+
+      <button type="submit" disabled={loading} className="rounded-2xl" style={{
+        padding: '16px 32px', fontSize: '1rem', fontFamily: 'var(--font-body)', fontWeight: 600,
+        background: 'linear-gradient(135deg, #ffffff, #f0d4db)', color: '#1a0a10',
+        border: 'none', cursor: loading ? 'wait' : 'pointer', opacity: loading ? 0.7 : 1,
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+      }}>
+        {loading ? 'Enviando…' : 'Unirme'}
+      </button>
+      {error && <p style={{ ...errStyle, textAlign: 'center' }}>{error}</p>}
+    </form>
   )
 }
 
@@ -180,7 +287,7 @@ export default function Home() {
             background: 'rgba(232,84,122,0.1)', border: '1px solid rgba(232,84,122,0.25)' }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#e8547a', boxShadow: '0 0 8px #e8547a' }}/>
             <span style={{ fontSize: 12, color: '#f8c8d4', letterSpacing: 1.5, textTransform: 'uppercase' }}>
-              Próximamente · Sevilla
+              Próximamente · Madrid, Barcelona y Sevilla
             </span>
           </div>
 
@@ -198,16 +305,26 @@ export default function Home() {
   fontSize: 'clamp(1.6rem, 3.5vw, 2.6rem)',
   fontWeight: 300, lineHeight: 1.4,
   color: '#ffffff',
-  marginBottom: 48, fontStyle: 'italic',
+  marginBottom: 24, fontStyle: 'italic',
 }}>
-  <span className="hero-line">La app de citas con{' '}
+  <span className="hero-line">La app para la gente que busca{' '}
   <span style={{
     background: 'linear-gradient(135deg, #f8c8d4, #e8547a 40%, #9b5de5)',
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
-  }}>IA</span>
-  {' '}</span>
-  <span className="hero-line">que encuentra a la persona más compatible contigo</span>
+  }}>algo serio.</span></span>
 </h1>
+
+          <div className="reveal delay-300" style={{ maxWidth: 640, margin: '0 auto 48px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.15rem)', color: 'rgba(240,236,234,0.85)', lineHeight: 1.6 }}>
+              Conoce personas compatibles contigo según tu personalidad, tus valores, tus intereses y lo que buscas en una pareja.
+            </p>
+            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.15rem)', color: 'rgba(240,236,234,0.85)', lineHeight: 1.6 }}>
+              Te explicamos por qué podéis encajar.
+            </p>
+            <p style={{ fontSize: 'clamp(0.95rem, 1.8vw, 1.05rem)', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+              Sin chat ni conversaciones interminables. Si ambos os dais match, podéis reservar una cita y conoceros en persona.
+            </p>
+          </div>
 
           <div className="reveal delay-400" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
             <button onClick={scrollToWaitlist} style={{
@@ -290,10 +407,10 @@ export default function Home() {
             </div>
             <div className="reveal-right" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
               {[
-                { icon: "01", title: "Primero, te conocemos", body: "Responde a una serie de preguntas a través de nuestra IA. Descubrimos tu personalidad, tus valores, lo que buscas y qué es importante para ti en una relación." },
-                { icon: "02", title: "Encontramos afinidades", body: "Analizamos vuestra personalidad, vuestros valores, vuestra forma de pensar y vuestra compatibilidad emocional para identificar a las personas más afines a ti." },
-                { icon: "03", title: "Descubre tu compatibilidad", body: "Te mostramos uno o varios perfiles de las personas compatibles. Podrás ver su perfil, fotos, edad y biografía, además de tu porcentaje de compatibilidad y un análisis personalizado que explica por qué encajáis." },
-                { icon: "04", title: "La cita", body: "Si ambos dais match, el chat os propondrá varios lugares, días y horas para que elijáis. Cada uno realiza un pago simbólico para confirmar la cita. El pago queda pendiente hasta que ambos hayáis pagado; solo entonces la cita queda confirmada. Y hablaréis el día de la cita, en persona. No hay chat, para no perder el tiempo con nadie que no tenga intención real de quedar." },
+                { icon: "01", title: "Primero, te conocemos.", body: "Responde preguntas sobre tu personalidad, valores, intereses y lo que buscas en una relación." },
+                { icon: "02", title: "Buscamos personas compatibles.", body: "Nuestro sistema analiza tu información para encontrar personas que puedan encajar contigo." },
+                { icon: "03", title: "Descubre por qué encajáis.", body: "Recibe propuestas de perfiles compatibles y descubre vuestras afinidades." },
+                { icon: "04", title: "Os conocéis en persona.", body: "Si ambos os dais match, podéis reservar una cita presencial." },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 20 }}>
                   <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -417,17 +534,17 @@ export default function Home() {
         {
           icon: '⏱',
           label: 'No pierdes el tiempo',
-          sub: 'Ves directamente personas que encajan contigo. Cuanto más la uses, mejores matches te dará.'
+          sub: 'Ves directamente personas que encajan contigo y te explicamos por qué podéis encajar.'
         },
         {
           icon: '✖',
-          label: 'Sistema anti-ghosting y sin fomo',
-          sub: 'Solo puedes hablar con 5 personas a la vez. Si quieres ver más, tienes que cerrar conversaciones de forma educada.'
+          label: 'Sin chat ni conversaciones interminables',
+          sub: 'Nada de mensajes que no llevan a ninguna parte. Si ambos os dais match, podéis reservar una cita.'
         },
         {
           icon: '◉',
-          label: 'La conexión no se queda en el chat',
-          sub: 'La IA te conecta con personas compatibles y si hay feeling, pasáis a la vida real.'
+          label: 'Os conocéis en persona',
+          sub: 'Te proponemos personas compatibles y, si hay match mutuo, os conocéis en una cita presencial.'
         }
       ].map((item, i) => (
         <div
@@ -467,13 +584,13 @@ export default function Home() {
         <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
           <div className="reveal" style={{ fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(232,84,122,0.7)', marginBottom: 24 }}>Lista de espera</div>
           <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.5rem, 7vw, 5rem)', fontWeight: 300, lineHeight: 1.1, fontStyle: 'italic', marginBottom: 16 }}>
-            Deja de elegir<br/><span className="gradient-text">a ciegas.</span>
+            ¡Únete a <span className="gradient-text">REALFACE!</span>
           </h2>
           <p className="reveal delay-200" style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: 48, lineHeight: 1.7 }}>
-            Sé de los primeros en descubrir<br/>una forma diferente de conectar.
+            Déjanos tus datos y te avisaremos cuando puedas empezar a conocer personas compatibles contigo.
           </p>
           <div className="reveal delay-300" style={{ display: 'flex', justifyContent: 'center' }}>
-            <WaitlistForm large />
+            <WaitlistForm />
           </div>
           <p className="reveal delay-400" style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 20 }}>
             Sin spam. Solo te avisamos cuando esté listo.
@@ -517,7 +634,7 @@ export default function Home() {
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>© 2025 RealFace · Todos los derechos reservados</div>
         <div style={{ display: 'flex', gap: 24, fontSize: 12, color: 'var(--text-muted)' }}>
-          <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Privacidad</a>
+          <a href="/privacidad" style={{ color: 'inherit', textDecoration: 'none' }}>Privacidad</a>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Términos</a>
         </div>
       </footer>

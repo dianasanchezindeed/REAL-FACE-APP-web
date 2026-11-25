@@ -439,9 +439,9 @@ export default function Home() {
             <div className="reveal-right" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
               {[
                 { icon: "01", title: "Primero, te conocemos.", body: "Responde preguntas sobre tu personalidad, valores, intereses y lo que buscas en una relación." },
-                { icon: "02", title: "Buscamos personas compatibles.", body: "Nuestro sistema analiza tu información para encontrar personas que puedan encajar contigo." },
-                { icon: "03", title: "Descubre por qué encajáis.", body: "Recibe propuestas de perfiles compatibles y descubre vuestras afinidades." },
-                { icon: "04", title: "Os conocéis en persona.", body: "Si ambos os dais match, podéis reservar una cita presencial." },
+                { icon: "02", title: "Te mostramos personas compatibles.", body: "De 3 en 3, con sus fotos, vuestro porcentaje de compatibilidad y lo que tenéis en común." },
+                { icon: "03", title: "Si os interesáis los dos, es un match.", body: "Propón una cita en uno de nuestros locales: elige plan, día y hora." },
+                { icon: "04", title: "Reservad vuestra plaza.", body: "Cuando los dos reserváis vuestra plaza (10 € por persona), la cita queda confirmada. Y os conocéis en persona." },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 20 }}>
                   <div style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -550,25 +550,25 @@ export default function Home() {
 
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 1 }}>
       {[
-  {
-    icon: '✦',
-          label: 'No eliges por fotos',
-          sub: 'La IA entiende quién eres y qué buscas, y te conecta con personas que realmente encajan contigo. Luego tú decides.'
+        {
+          icon: '✦',
+          label: 'Sabes por qué encajáis',
+          sub: 'Además de ver sus fotos, te explicamos por qué podéis encajar con cada persona.'
+        },
+        {
+          icon: '◈',
+          label: 'Perfiles verificados',
+          sub: 'Cada perfil se verifica con un selfie que revisa nuestro equipo.'
         },
         {
           icon: '⏱',
-          label: 'No pierdes el tiempo',
-          sub: 'Ves directamente personas que encajan contigo y te explicamos por qué podéis encajar.'
-        },
-        {
-          icon: '✖',
-          label: 'Sin chat ni conversaciones interminables',
-          sub: 'Nada de mensajes que no llevan a ninguna parte. Si ambos os dais match, podéis reservar una cita.'
+          label: 'Máximo 5 matches activos',
+          sub: 'Para que te centres en quien de verdad te interesa.'
         },
         {
           icon: '◉',
-          label: 'Os conocéis en persona',
-          sub: 'Te proponemos personas compatibles y, si hay match mutuo, os conocéis en una cita presencial.'
+          label: 'Citas en locales públicos',
+          sub: 'Os veis en locales públicos de Madrid, Barcelona y Sevilla.'
         }
       ].map((item, i) => (
         <div
@@ -593,6 +593,16 @@ export default function Home() {
           </p>
         </div>
       ))}
+    </div>
+
+    <div className="reveal glass" style={{ marginTop: 48, padding: '24px 28px', borderRadius: 20, border: '1px solid rgba(76,201,240,0.2)', display: 'flex', gap: 18, alignItems: 'flex-start' }}>
+      <div className="gradient-text-cool" style={{ fontSize: 26, lineHeight: 1 }}>⛨</div>
+      <div>
+        <div style={{ fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(76,201,240,0.85)', marginBottom: 8 }}>Seguridad</div>
+        <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+          Puedes reportar y bloquear cualquier perfil. Revisamos cada reporte en menos de 24 horas.
+        </p>
+      </div>
     </div>
 
   </div>

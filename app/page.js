@@ -548,8 +548,13 @@ export default function Home() {
 
     </div>
 
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 1 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 1 }}>
       {[
+        {
+          icon: '⏱',
+          label: 'No pierdes el tiempo',
+          sub: 'Ves directamente personas que encajan contigo, sin swipe infinito.'
+        },
         {
           icon: '✦',
           label: 'Sabes por qué encajáis',
@@ -561,14 +566,19 @@ export default function Home() {
           sub: 'Cada perfil se verifica con un selfie que revisa nuestro equipo.'
         },
         {
-          icon: '⏱',
-          label: 'Máximo 5 matches activos',
-          sub: 'Para que te centres en quien de verdad te interesa.'
+          icon: '✖',
+          label: 'Sistema anti-ghosting y sin fomo',
+          sub: 'Máximo 5 matches activos a la vez, para que te centres en quien de verdad te interesa.'
+        },
+        {
+          icon: '◌',
+          label: 'Sin chat ni conversaciones interminables',
+          sub: 'Nada de mensajes que no llevan a ninguna parte. Si ambos os dais match, podéis reservar una cita.'
         },
         {
           icon: '◉',
-          label: 'Citas en locales públicos',
-          sub: 'Os veis en locales públicos de Madrid, Barcelona y Sevilla.'
+          label: 'Os conocéis en persona',
+          sub: 'Te proponemos personas compatibles y, si hay match mutuo, os conocéis en una cita presencial.'
         }
       ].map((item, i) => (
         <div
@@ -576,7 +586,7 @@ export default function Home() {
           className={`reveal delay-${i * 100 + 200}`}
           style={{
             padding: '36px 28px',
-            borderRight: i < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+            borderRight: i % 3 !== 2 ? '1px solid rgba(255,255,255,0.05)' : 'none',
             borderBottom: '1px solid rgba(255,255,255,0.05)'
           }}
         >
@@ -595,11 +605,11 @@ export default function Home() {
       ))}
     </div>
 
-    <div className="reveal glass" style={{ marginTop: 48, padding: '24px 28px', borderRadius: 20, border: '1px solid rgba(76,201,240,0.2)', display: 'flex', gap: 18, alignItems: 'flex-start' }}>
-      <div className="gradient-text-cool" style={{ fontSize: 26, lineHeight: 1 }}>⛨</div>
+    <div className="reveal glass" style={{ maxWidth: 620, margin: '40px auto 0', padding: '14px 20px', borderRadius: 16, border: '1px solid rgba(76,201,240,0.2)', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+      <div className="gradient-text-cool" style={{ fontSize: 18, lineHeight: 1.2 }}>⛨</div>
       <div>
-        <div style={{ fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(76,201,240,0.85)', marginBottom: 8 }}>Seguridad</div>
-        <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+        <div style={{ fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(76,201,240,0.85)', marginBottom: 4 }}>Seguridad</div>
+        <p style={{ fontSize: '0.98rem', color: 'var(--text-muted)', lineHeight: 1.55 }}>
           Puedes reportar y bloquear cualquier perfil. Revisamos cada reporte en menos de 24 horas.
         </p>
       </div>

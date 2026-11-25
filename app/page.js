@@ -26,14 +26,16 @@ const CITIES = ['Madrid', 'Barcelona', 'Sevilla', 'Otra ciudad']
 const PHONES = [
   { value: 'ios', label: 'iPhone' },
   { value: 'android', label: 'Android' },
-  { value: 'unknown', label: 'No lo sé' },
 ]
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+const NAME_MAX = 20
+const EMAIL_MAX = 60
+const CITY_MAX = 40
 
-const labelStyle = { display: 'block', fontSize: 13, color: 'rgba(240,236,234,0.8)', marginBottom: 8, textAlign: 'left' }
+const labelStyle = { display: 'block', fontSize: 15, color: 'rgba(240,236,234,0.8)', marginBottom: 8, textAlign: 'left' }
 
 function WaitlistForm() {
-  const [form, setForm] = useState({ name: '', age: '', city: '', email: '', phone_os: '', privacy: false, marketing: false })
+  const [form, setForm] = useState({ name: '', age: '', city: '', cityOther: '', email: '', phone_os: '', privacy: false, marketing: false })
   const [errors, setErrors] = useState({})
   const [done, setDone] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -59,12 +61,14 @@ function WaitlistForm() {
     const e = {}
     const name = form.name.trim()
     const age = Number(form.age)
-    if (name.length < 2 || name.length > 60) e.name = 'Escribe tu nombre.'
+    if (name.length < 2 || name.length > NAME_MAX) e.name = 'Escribe tu nombre.'
     if (!form.age || !Number.isInteger(age)) e.age = 'Escribe tu edad.'
     else if (age < 18) e.age = 'REALFACE es solo para mayores de 18 años.'
     else if (age > 99) e.age = 'Revisa tu edad.'
     if (!CITIES.includes(form.city)) e.city = 'Elige tu ciudad.'
-    if (!EMAIL_RE.test(form.email.trim())) e.email = 'Escribe un correo válido.'
+    else if (form.city === 'Otra ciudad' && form.cityOther.trim().length < 2) e.cityOther = 'Escribe tu ciudad.'
+    const email = form.email.trim()
+    if (email.length > EMAIL_MAX || !EMAIL_RE.test(email)) e.email = 'Escribe un correo válido.'
     if (!PHONES.some(p => p.value === form.phone_os)) e.phone_os = 'Elige una opción.'
     if (!form.privacy) e.privacy = 'Debes aceptar la política de privacidad.'
     return e
@@ -83,6 +87,7 @@ function WaitlistForm() {
       p_name: form.name.trim(),
       p_age: Number(form.age),
       p_city: form.city,
+      p_city_other: form.city === 'Otra ciudad' ? form.cityOther.trim() : null,
       p_email: form.email.trim().toLowerCase(),
       p_phone_os: form.phone_os,
       p_privacy_accepted: form.privacy,
@@ -105,17 +110,17 @@ function WaitlistForm() {
     <div className="glass rounded-2xl" style={{ padding: '32px 28px', width: '100%', maxWidth: 520,
       border: '1px solid rgba(232,84,122,0.3)', textAlign: 'center' }}>
       <div className="gradient-text" style={{ fontSize: 28, marginBottom: 12 }}>✦</div>
-      <p className="gradient-text font-display" style={{ fontSize: '1.6rem', fontStyle: 'italic', marginBottom: 10 }}>
+      <p className="gradient-text font-display" style={{ fontSize: '1.9rem', fontStyle: 'italic', marginBottom: 10 }}>
         ¡Gracias por tu interés en REALFACE!
       </p>
-      <p style={{ fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+      <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
         Ya tenemos tus datos. Te avisaremos cuando puedas empezar a utilizar REALFACE.
       </p>
     </div>
   )
 
-  const errStyle = { fontSize: 12, color: '#e8547a', marginTop: 6, textAlign: 'left' }
-  const inputCls = 'input-field rounded-2xl w-full px-5 py-4 text-base'
+  const errStyle = { fontSize: 13, color: '#e8547a', marginTop: 6, textAlign: 'left' }
+  const inputCls = 'input-field rounded-2xl w-full px-5 py-4 text-lg'
 
   return (
     <form ref={ref} onSubmit={submit} noValidate className="glass rounded-2xl"
@@ -124,14 +129,14 @@ function WaitlistForm() {
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: 12 }}>
         <div>
           <label htmlFor="rf-name" style={labelStyle}>Nombre</label>
-          <input id="rf-name" type="text" autoComplete="given-name" maxLength={60} value={form.name}
+          <input id="rf-name" type="text" autoComplete="given-name" maxLength={NAME_MAX} value={form.name}
             onChange={e => set('name', e.target.value)} placeholder="Tu nombre" className={inputCls}/>
           {errors.name && <p style={errStyle}>{errors.name}</p>}
         </div>
         <div>
           <label htmlFor="rf-age" style={labelStyle}>Edad</label>
-          <input id="rf-age" type="number" inputMode="numeric" min={18} max={99} value={form.age}
-            onChange={e => set('age', e.target.value)} placeholder="18+" className={inputCls}/>
+          <input id="rf-age" type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2} value={form.age}
+            onChange={e => set('age', e.target.value.replace(/\D/g, '').slice(0, 2))} placeholder="18+" className={inputCls}/>
           {errors.age && <p style={errStyle}>{errors.age}</p>}
         </div>
       </div>
@@ -144,24 +149,32 @@ function WaitlistForm() {
           {CITIES.map(c => <option key={c} value={c} style={{ color: '#1a0a10' }}>{c}</option>)}
         </select>
         {errors.city && <p style={errStyle}>{errors.city}</p>}
+        {form.city === 'Otra ciudad' && (
+          <div style={{ marginTop: 12 }}>
+            <label htmlFor="rf-city-other" style={labelStyle}>¿En qué ciudad vives?</label>
+            <input id="rf-city-other" type="text" autoComplete="address-level2" maxLength={CITY_MAX} value={form.cityOther}
+              onChange={e => set('cityOther', e.target.value)} placeholder="Tu ciudad" className={inputCls}/>
+            {errors.cityOther && <p style={errStyle}>{errors.cityOther}</p>}
+          </div>
+        )}
       </div>
 
       <div>
         <label htmlFor="rf-email" style={labelStyle}>Correo electrónico</label>
-        <input id="rf-email" type="email" autoComplete="email" maxLength={254} value={form.email}
+        <input id="rf-email" type="email" autoComplete="email" maxLength={EMAIL_MAX} value={form.email}
           onChange={e => set('email', e.target.value)} placeholder="tu@email.com" className={inputCls}/>
         {errors.email && <p style={errStyle}>{errors.email}</p>}
       </div>
 
       <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
         <legend style={labelStyle}>¿Qué móvil utilizas?</legend>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
           {PHONES.map(p => {
             const active = form.phone_os === p.value
             return (
               <button type="button" key={p.value} onClick={() => set('phone_os', p.value)} aria-pressed={active}
                 className="rounded-2xl" style={{
-                  padding: '12px 8px', fontSize: 14, cursor: 'pointer', fontFamily: 'var(--font-body)',
+                  padding: '14px 8px', fontSize: 16, cursor: 'pointer', fontFamily: 'var(--font-body)',
                   color: 'var(--text-primary)',
                   background: active ? 'rgba(232,84,122,0.15)' : 'rgba(255,255,255,0.04)',
                   border: active ? '1px solid rgba(232,84,122,0.6)' : '1px solid rgba(255,255,255,0.1)',
@@ -174,13 +187,13 @@ function WaitlistForm() {
       </fieldset>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, textAlign: 'left' }}>
-        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, color: 'rgba(240,236,234,0.8)', lineHeight: 1.5, cursor: 'pointer' }}>
+        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 15, color: 'rgba(240,236,234,0.8)', lineHeight: 1.5, cursor: 'pointer' }}>
           <input type="checkbox" checked={form.privacy} onChange={e => set('privacy', e.target.checked)}
             style={{ marginTop: 3, accentColor: '#e8547a', width: 16, height: 16, flexShrink: 0 }}/>
           <span>He leído y acepto la <a href="/privacidad" target="_blank" rel="noopener" style={{ color: '#f8c8d4', textDecoration: 'underline' }}>política de privacidad</a>.</span>
         </label>
         {errors.privacy && <p style={{ ...errStyle, marginTop: -4 }}>{errors.privacy}</p>}
-        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5, cursor: 'pointer' }}>
+        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.5, cursor: 'pointer' }}>
           <input type="checkbox" checked={form.marketing} onChange={e => set('marketing', e.target.checked)}
             style={{ marginTop: 3, accentColor: '#e8547a', width: 16, height: 16, flexShrink: 0 }}/>
           <span>Opcional: quiero recibir también novedades y promociones de REALFACE.</span>
@@ -188,7 +201,7 @@ function WaitlistForm() {
       </div>
 
       <button type="submit" disabled={loading} className="rounded-2xl" style={{
-        padding: '16px 32px', fontSize: '1rem', fontFamily: 'var(--font-body)', fontWeight: 600,
+        padding: '16px 32px', fontSize: '1.1rem', fontFamily: 'var(--font-body)', fontWeight: 600,
         background: 'linear-gradient(135deg, #ffffff, #f0d4db)', color: '#1a0a10',
         border: 'none', cursor: loading ? 'wait' : 'pointer', opacity: loading ? 0.7 : 1,
         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -235,6 +248,24 @@ function CompatCircle() {
         <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>compatibilidad</div>
       </div>
     </div>
+  )
+}
+
+function JoinButton({ onClick, large = false }) {
+  return (
+    <button onClick={onClick} style={{
+      padding: large ? '18px 56px' : '16px 48px', borderRadius: 50,
+      fontSize: large ? '1.05rem' : '1rem', fontFamily: 'var(--font-body)', fontWeight: 600,
+      cursor: 'pointer', border: 'none',
+      background: 'linear-gradient(135deg, #ffffff, #f0d4db)',
+      color: '#1a0a10', letterSpacing: 0.5,
+      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+    }}
+    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 16px 50px rgba(255,255,255,0.2)' }}
+    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
+    >
+      Únete a la lista de espera
+    </button>
   )
 }
 
@@ -286,7 +317,7 @@ export default function Home() {
             padding: '6px 16px', borderRadius: 50, marginBottom: 32,
             background: 'rgba(232,84,122,0.1)', border: '1px solid rgba(232,84,122,0.25)' }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#e8547a', boxShadow: '0 0 8px #e8547a' }}/>
-            <span style={{ fontSize: 12, color: '#f8c8d4', letterSpacing: 1.5, textTransform: 'uppercase' }}>
+            <span style={{ fontSize: 14, color: '#f8c8d4', letterSpacing: 1.5, textTransform: 'uppercase' }}>
               Próximamente · Madrid, Barcelona y Sevilla
             </span>
           </div>
@@ -302,26 +333,27 @@ export default function Home() {
           </div>
 
         <h1 className="reveal delay-200 font-display" style={{
-  fontSize: 'clamp(1.6rem, 3.5vw, 2.6rem)',
-  fontWeight: 300, lineHeight: 1.4,
+  fontSize: 'clamp(1.9rem, 4.2vw, 3rem)',
+  fontWeight: 300, lineHeight: 1.3,
   color: '#ffffff',
   marginBottom: 24, fontStyle: 'italic',
 }}>
-  <span className="hero-line">La app para la gente que busca{' '}
+  <span className="hero-line" style={{ display: 'block' }}>La app para la gente que</span>
+  <span className="hero-line" style={{ display: 'block' }}>busca{' '}
   <span style={{
     background: 'linear-gradient(135deg, #f8c8d4, #e8547a 40%, #9b5de5)',
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
   }}>algo serio.</span></span>
 </h1>
 
-          <div className="reveal delay-300" style={{ maxWidth: 640, margin: '0 auto 48px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.15rem)', color: 'rgba(240,236,234,0.85)', lineHeight: 1.6 }}>
+          <div className="reveal delay-300" style={{ maxWidth: 720, margin: '0 auto 48px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <p style={{ fontSize: 'clamp(1.2rem, 2.4vw, 1.45rem)', color: 'rgba(240,236,234,0.85)', lineHeight: 1.6 }}>
               Conoce personas compatibles contigo según tu personalidad, tus valores, tus intereses y lo que buscas en una pareja.
             </p>
-            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.15rem)', color: 'rgba(240,236,234,0.85)', lineHeight: 1.6 }}>
+            <p style={{ fontSize: 'clamp(1.2rem, 2.4vw, 1.45rem)', color: 'rgba(240,236,234,0.85)', lineHeight: 1.6 }}>
               Te explicamos por qué podéis encajar.
             </p>
-            <p style={{ fontSize: 'clamp(0.95rem, 1.8vw, 1.05rem)', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+            <p style={{ fontSize: 'clamp(1.1rem, 2.2vw, 1.3rem)', color: 'var(--text-muted)', lineHeight: 1.6 }}>
               Sin chat ni conversaciones interminables. Si ambos os dais match, podéis reservar una cita y conoceros en persona.
             </p>
           </div>
@@ -340,7 +372,7 @@ export default function Home() {
             >
               Únete a la lista de espera
             </button>
-            <span style={{ fontSize: 16, color: 'var(--text-muted)' }}>
+            <span style={{ fontSize: 18, color: 'var(--text-muted)' }}>
               Más de 1200 personas esperando
             </span>
           </div>
@@ -355,7 +387,7 @@ export default function Home() {
             <div key={idx} style={{ display: 'flex', gap: 64 }}>
               {['Menos swipe, más conexión', 'Personas que encajan contigo', 'Planes reales, no chats eternos',
                 'IA que te conoce de verdad', 'No más conexiones vacías', 'Tu próxima pareja te espera'].map((t, i) => (
-                <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 20, fontSize: 13,
+                <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 20, fontSize: 15,
                   color: 'var(--text-muted)', letterSpacing: 1 }}>
                   <span className="gradient-text" style={{ fontSize: 10 }}>✦</span>
                   {t}
@@ -373,34 +405,33 @@ export default function Home() {
         <div className="orb" style={{ width: 700, height: 700, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'radial-gradient(circle, rgba(155,93,229,0.1) 0%, transparent 60%)' }}/>
         <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 2 }}>
           <div style={{ textAlign: 'center', marginBottom: 80 }}>
-            <div className="reveal" style={{ fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(180,130,255,0.85)', marginBottom: 20 }}>La magia</div>
-            <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.3rem, 6.5vw, 4.6rem)', fontWeight: 300, lineHeight: 1.15, fontStyle: 'italic' }}>
+            <div className="reveal" style={{ fontSize: 16, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(180,130,255,0.85)', marginBottom: 20 }}>La magia</div>
+            <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.6rem, 7vw, 5rem)', fontWeight: 300, lineHeight: 1.15, fontStyle: 'italic' }}>
               Te conoce antes<br/><span className="gradient-text">de conectarte.</span>
             </h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 48, alignItems: 'center' }}>
             <div className="reveal-left" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
               <CompatCircle />
-              <div className="glass" style={{ padding: '24px 28px', borderRadius: 20, width: '100%', maxWidth: 300, border: '1px solid rgba(232,84,122,0.15)' }}>
+              <div className="glass" style={{ padding: '24px 28px', borderRadius: 20, width: '100%', maxWidth: 340, border: '1px solid rgba(232,84,122,0.15)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg, rgba(232,84,122,0.4), rgba(155,93,229,0.4))', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>◈</div>
-                    <div><div style={{ fontSize: 13, fontWeight: 500 }}>Sofía & Tú</div><div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Análisis IA</div></div>
+                    <div><div style={{ fontSize: 15, fontWeight: 500 }}>Sofía & Tú</div><div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Análisis IA</div></div>
                   </div>
                   <div className="gradient-text" style={{ fontSize: '1.5rem', fontWeight: 300, fontFamily: 'var(--font-display)' }}>87%</div>
                 </div>
                 {[
-                  { label: 'Valores compartidos', val: 92, color: '#e8547a' },
-                  { label: 'Estilo de comunicación', val: 84, color: '#9b5de5' },
-                  { label: 'Alineación emocional', val: 88, color: '#4cc9f0' },
-                ].map((bar, i) => (
-                  <div key={i} style={{ marginBottom: 12 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, fontSize: 11, color: 'var(--text-muted)' }}>
-                      <span>{bar.label}</span><span style={{ color: bar.color }}>{bar.val}%</span>
-                    </div>
-                    <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)' }}>
-                      <div style={{ height: '100%', width: `${bar.val}%`, borderRadius: 2, background: `linear-gradient(90deg, ${bar.color}, ${bar.color}80)`, boxShadow: `0 0 8px ${bar.color}60` }}/>
-                    </div>
+                  { label: 'Ambos queréis tener hijos', color: '#e8547a' },
+                  { label: 'Os gusta hacer senderismo', color: '#9b5de5' },
+                  { label: 'Os gusta tomar vinos', color: '#4cc9f0' },
+                  { label: 'Os encanta la lectura', color: '#e8547a' },
+                  { label: 'Queréis quedaros a vivir en la misma ciudad', color: '#9b5de5' },
+                  { label: 'Os interesa hablar de psicología, historia, filosofía y arte', color: '#4cc9f0' },
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 12 }}>
+                    <span style={{ color: item.color, fontSize: 14, lineHeight: 1.45, textShadow: `0 0 8px ${item.color}60` }}>✓</span>
+                    <span style={{ fontSize: 14, color: 'rgba(240,236,234,0.8)', lineHeight: 1.45 }}>{item.label}</span>
                   </div>
                 ))}
               </div>
@@ -417,8 +448,8 @@ export default function Home() {
                     <span className="gradient-text" style={{ fontSize: 18 }}>{item.icon}</span>
                   </div>
                   <div>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: 6 }}>{item.title}</h4>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.65 }}>{item.body}</p>
+                    <h4 style={{ fontSize: '1.25rem', fontWeight: 500, marginBottom: 6 }}>{item.title}</h4>
+                    <p style={{ fontSize: '1.08rem', color: 'var(--text-muted)', lineHeight: 1.65 }}>{item.body}</p>
                   </div>
                 </div>
               ))}
@@ -434,9 +465,12 @@ export default function Home() {
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 16 }}>
             {['Menos swipe, más conexión', 'Personas que encajan contigo', 'Planes reales, no chats eternos'].map((prop, i) => (
               <div key={i} className={`reveal delay-${i * 150} glass`} style={{ padding: '14px 28px', borderRadius: 50, border: '1px solid rgba(255,255,255,0.08)' }}>
-                <span className="font-display" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.3rem)', fontWeight: 300, fontStyle: 'italic' }}>{prop}</span>
+                <span className="font-display" style={{ fontSize: 'clamp(1.2rem, 3vw, 1.6rem)', fontWeight: 300, fontStyle: 'italic' }}>{prop}</span>
               </div>
             ))}
+          </div>
+          <div className="reveal delay-300" style={{ marginTop: 48 }}>
+            <JoinButton onClick={scrollToWaitlist} />
           </div>
         </div>
       </section>
@@ -470,6 +504,9 @@ export default function Home() {
             ))}
           </div>
         </div>
+        <div className="reveal" style={{ textAlign: 'center', marginTop: 64, position: 'relative', zIndex: 2 }}>
+          <JoinButton onClick={scrollToWaitlist} />
+        </div>
       </section>
 
   {/* SOLUCIÓN */}
@@ -487,11 +524,11 @@ export default function Home() {
 
   <div style={{ maxWidth: 1000, margin: '0 auto', position: 'relative', zIndex: 2 }}>
     
-    <div style={{ textAlign: 'center', marginBottom: 90 }}>
+    <div style={{ textAlign: 'center', marginBottom: 70 }}>
       <div
         className="reveal"
         style={{
-          fontSize: 12,
+          fontSize: 14,
           letterSpacing: 3,
           textTransform: 'uppercase',
           color: 'rgba(232,84,122,0.75)',
@@ -505,23 +542,10 @@ export default function Home() {
         RealFace es diferente.
       </h2>
 
-      <p className="reveal delay-200" style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginTop: 16, fontStyle: 'italic', letterSpacing: 0.5 }}>
+      <p className="reveal delay-200" style={{ fontSize: '1.3rem', color: 'var(--text-muted)', marginTop: 16, fontStyle: 'italic', letterSpacing: 0.5 }}>
         This feels different.
       </p>
 
-      <div
-        className="reveal delay-300"
-        style={{
-          fontSize: 12,
-          letterSpacing: 3,
-          textTransform: 'uppercase',
-          color: 'rgba(76,201,240,0.85)',
-          marginTop: 80,
-          marginBottom: 10,
-        }}
-      >
-        Primer caso de uso
-      </div>
     </div>
 
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 1 }}>
@@ -560,11 +584,11 @@ export default function Home() {
             {item.icon}
           </div>
 
-          <h3 style={{ fontSize: '1.35rem', fontWeight: 500, marginBottom: 10 }}>
+          <h3 style={{ fontSize: '1.55rem', fontWeight: 500, marginBottom: 10 }}>
             {item.label}
           </h3>
 
-          <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
             {item.sub}
           </p>
         </div>
@@ -582,17 +606,17 @@ export default function Home() {
       }}>
         <div className="orb" style={{ width: 700, height: 700, top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'radial-gradient(circle, rgba(155,93,229,0.15) 0%, transparent 60%)' }}/>
         <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-          <div className="reveal" style={{ fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(232,84,122,0.7)', marginBottom: 24 }}>Lista de espera</div>
+          <div className="reveal" style={{ fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(232,84,122,0.7)', marginBottom: 24 }}>Lista de espera</div>
           <h2 className="reveal delay-100 font-display" style={{ fontSize: 'clamp(2.5rem, 7vw, 5rem)', fontWeight: 300, lineHeight: 1.1, fontStyle: 'italic', marginBottom: 16 }}>
             ¡Únete a <span className="gradient-text">REALFACE!</span>
           </h2>
-          <p className="reveal delay-200" style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: 48, lineHeight: 1.7 }}>
+          <p className="reveal delay-200" style={{ fontSize: '1.3rem', color: 'var(--text-muted)', marginBottom: 48, lineHeight: 1.7 }}>
             Déjanos tus datos y te avisaremos cuando puedas empezar a conocer personas compatibles contigo.
           </p>
           <div className="reveal delay-300" style={{ display: 'flex', justifyContent: 'center' }}>
             <WaitlistForm />
           </div>
-          <p className="reveal delay-400" style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 20 }}>
+          <p className="reveal delay-400" style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 20 }}>
             Sin spam. Solo te avisamos cuando esté listo.
           </p>
         </div>
@@ -632,8 +656,8 @@ export default function Home() {
           <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'linear-gradient(135deg, #e8547a, #9b5de5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10 }}>✦</div>
           <span className="font-display" style={{ fontSize: '1rem', letterSpacing: 2, color: 'var(--text-muted)' }}>RealFace</span>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>© 2025 RealFace · Todos los derechos reservados</div>
-        <div style={{ display: 'flex', gap: 24, fontSize: 12, color: 'var(--text-muted)' }}>
+        <div style={{ fontSize: 14, color: 'var(--text-muted)' }}>© 2025 RealFace · Todos los derechos reservados</div>
+        <div style={{ display: 'flex', gap: 24, fontSize: 14, color: 'var(--text-muted)' }}>
           <a href="/privacidad" style={{ color: 'inherit', textDecoration: 'none' }}>Privacidad</a>
           <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Términos</a>
         </div>
